@@ -1,13 +1,12 @@
-// Code by [Risqi]
 <template>
-    <div class="item-list container py-4 bg-white rounded shadow-sm">
-        <div class="header d-flex justify-content-between align-items-center mb-3">
+    <div class="item-list">
+        <div class="header">
             <h2>Daftar Barang</h2>
-            <button class="btn btn-primary" @click="showAddForm">Tambah Item</button>
+            <button class="add-btn" @click="showAddForm">Tambah Item</button>
         </div>
-        <div class="item-cards row">
-            <ItemCard v-for="item in items" :key="item.kode" :item="item" @edit-item="editItem"
-                @delete-item="deleteItem" class="col-md-6 mb-4" />
+        <div class="item-cards">
+            <ItemCard v-for="item in items" :key="item.id" :item="item" @edit-item="editItem"
+                @delete-item="handeledeleteItem" />
         </div>
         <AllModal :visible="showForm" @close="cancelEditForm">
             <ItemForm :item="selectedItem" :isEdit="isEdit" @submit="handleSubmit" @cancel="cancelEditForm" />
@@ -16,10 +15,11 @@
 </template>
 
 <script>
-import ItemCard from "./ItemCard.vue";
-import AllModal from "@/components/AllModal.vue";
-import ItemForm from "./ItemForm.vue";
+import { computed, onMounted } from 'vue';
 import { useItemStore } from "@/store/itemStore";
+import ItemCard from "@/components/admin/item/ItemCard.vue";
+import AllModal from "@/components/AllModal.vue";
+import ItemForm from "@/components/admin/item/ItemForm.vue";
 import { EventBus } from "@/utils/EventBus";
 
 export default {
@@ -29,6 +29,21 @@ export default {
         AllModal,
         ItemForm,
     },
+    setup() {
+        const itemStore = useItemStore();
+        const items = computed(() => itemStore.items);
+
+        onMounted(() => {
+            itemStore.fetchItems();
+        });
+        return {
+            items,
+            itemStore,
+            addItem: itemStore.addItem,
+            updateItem: itemStore.updateItem,
+            deleteItem: itemStore.deleteItem,
+        };
+    },
     data() {
         return {
             showForm: false,
@@ -37,21 +52,11 @@ export default {
             searchQuery: "",
         };
     },
-    computed: {
-        items() {
-            return this.itemStore.items;
-        },
-        filteredItems() {
-            return this.items.filter((item) => {
-                return (
-                    item.kode.toLowerCase().includes(this.searchQuery.toLowerCase())
-                );
-            });
-        },
-    },
+
+
     methods: {
         showAddForm() {
-            this.selectedItem = { kode: "", name: "", description: "", quantity: "" };
+            this.selectedItem = { id: 0, name: "", description: "", quantity: 0 };
             this.isEdit = false;
             this.showForm = true;
         },
@@ -60,27 +65,21 @@ export default {
             this.isEdit = true;
             this.showForm = true;
         },
-        handleSubmit(item) {
-            if (
-                item.kode &&
-                item.nama &&
-                item.deskripsi &&
-                item.stok !== null &&
-                !isNaN(item.stok)
-            ) {
-                if (this.isEdit) {
-                    this.itemStore.updateItem(item);
-                } else {
-                    this.itemStore.addItem(item);
-                }
+        async handleSubmit(item) {
+            if (this.isEdit) {
+                await this.itemStore.updateItem(item);
+            } else {
+                await this.itemStore.addItem(item);
             }
+            await this.itemStore.fetchItems();
             this.showForm = false;
         },
         cancelEditForm() {
             this.showForm = false;
         },
-        deleteItem(kode) {
-            this.itemStore.deleteItem(kode);
+        async handeledeleteItem(item) {
+            await this.deleteItem(item);
+            await this.itemStore.fetchItems();
         },
         handleSearch(query) {
             this.searchQuery = query;
@@ -92,35 +91,119 @@ export default {
     beforeUnmount() {
         EventBus.off("search", this.handleSearch);
     },
-    setup() {
-        const itemStore = useItemStore();
-        return {
-            itemStore,
-        };
-    },
 };
 </script>
 
 <style scoped>
 .item-list {
+    padding: 24px;
     background-color: #fff;
     border-radius: 8px;
-    margin: 25px 0;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin: 20px 0;
 }
 
-.header h2 {
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+h2 {
     color: #4b3f6b;
     font-size: 24px;
 }
 
-.header .btn-primary {
-    background-color: #007bff;
-    border-color: #007bff;
+.add-btn {
+    background-color: #754bc5;
+    color: white;
+    padding: 6px 12px;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 14px;
 }
 
-.header .btn-primary:hover {
-    background-color: #0056b3;
-    border-color: #0056b3;
+.add-btn:hover {
+    background-color: #5a37a0;
+}
+
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th,
+td {
+    border: 1px solid #ddd;
+    padding: 12px 15px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+th {
+    background-color: #4b3f6b;
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+tr:hover {
+    background-color: #ddd;
+}
+
+button {
+    padding: 6px 12px;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.edit-btn {
+    background-color: #4caf50;
+    color: white;
+    margin-right: 5px;
+}
+
+.edit-btn:hover {
+    background-color: #45a049;
+}
+
+.delete-btn {
+    background-color: #f44336;
+    color: white;
+}
+
+.delete-btn:hover {
+    background-color: #d32f2f;
+}
+
+@media (max-width: 600px) {
+
+    th,
+    td {
+        padding: 8px 10px;
+    }
+
+    .action-buttons {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .action-buttons button {
+        margin: 5px 0;
+    }
 }
 </style>

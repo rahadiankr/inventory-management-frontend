@@ -4,35 +4,35 @@
         <form @submit.prevent="submitForm">
             <table>
                 <tbody>
-                <tr>
-                    <td>ID Transaksi</td>
-                    <td>
-                        <input type="text" v-model="form.id" id="id" :disabled="isEdit" required/>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Tanggal Transaksi</td>
-                    <td>
-                        <input type="date" v-model="form.tanggal" id="tanggal" required />
-                    </td>
-                </tr>
-                <tr>
-                    <td>Kode Barang</td>
-                    <td>
-                        <input type="text" v-model="form.kodeBarang" id="kodeBarang" required />
-                    </td>
-                </tr>
-                <tr>
-                    <td>Jumlah</td>
-                    <td>
-                        <input type="number" v-model="form.jumlah" id="jumlah" required />
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <button type="submit">{{ isEdit ? "Simpan Perubahan" : "Tambah Transaksi" }}</button>
-                    </td>
-                </tr>
+                    <tr>
+                        <td>ID Transaksi</td>
+                        <td>
+                            <input type="text" v-model="form.id" id="id" :disabled="isEdit" required />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Tanggal Transaksi</td>
+                        <td>
+                            <input type="date" v-model="form.tanggal" id="tanggal" required />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Kode Barang</td>
+                        <td>
+                            <input type="text" v-model="form.idBarang" id="idBarang" required />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Jumlah</td>
+                        <td>
+                            <input type="number" v-model="form.jumlah" id="jumlah" required />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <button type="submit">{{ isEdit ? "Simpan Perubahan" : "Tambah Transaksi" }}</button>
+                        </td>
+                    </tr>
                 </tbody>
             </table>
         </form>
@@ -56,7 +56,7 @@ export default {
             form: {
                 id: "",
                 tanggal: "",
-                kodeBarang: "",
+                idBarang: "",
                 jumlah: 0,
             },
         };
@@ -71,7 +71,7 @@ export default {
                     this.form = {
                         id: "",
                         tanggal: "",
-                        kodeBarang: "",
+                        idBarang: "",
                         jumlah: 0,
                     };
                 }
@@ -83,7 +83,7 @@ export default {
             if (
                 this.form.id &&
                 this.form.tanggal &&
-                this.form.kodeBarang &&
+                this.form.idBarang &&
                 this.form.jumlah !== null &&
                 this.form.jumlah !== undefined
             ) {
@@ -100,10 +100,12 @@ table {
     width: 100%;
     border-collapse: collapse;
 }
+
 td {
     padding: 10px;
     border: 1px solid #ddd;
 }
+
 input[type="text"],
 input[type="date"],
 input[type="number"] {
@@ -111,6 +113,7 @@ input[type="number"] {
     padding: 8px;
     box-sizing: border-box;
 }
+
 button[type="submit"] {
     background-color: #4caf50;
     color: white;
@@ -119,6 +122,7 @@ button[type="submit"] {
     border-radius: 5px;
     cursor: pointer;
 }
+
 button[type="submit"]:hover {
     background-color: #45a049;
 }

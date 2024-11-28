@@ -1,21 +1,20 @@
-// Code by [Risqi]
 <template>
     <form @submit.prevent="submitForm" class="user-form">
         <div class="mb-3">
             <label for="username" class="form-label">Username</label>
-            <input type="text" v-model="form.username" id="username" class="form-control" required/>
+            <input type="text" v-model="form.username" id="username" class="form-control" required />
         </div>
         <div class="mb-3">
             <label for="email" class="form-label">Email</label>
-            <input type="email" v-model="form.email" id="email" class="form-control" required/>
+            <input type="email" v-model="form.email" id="email" class="form-control" required />
         </div>
         <div v-if="!isEdit" class="mb-3">
             <label for="password" class="form-label">Password</label>
-            <input type="password" v-model="form.password" id="password" class="form-control" required/>
+            <input type="password" v-model="form.password" id="password" class="form-control" required />
         </div>
         <div v-if="!isEdit" class="mb-3">
             <label for="confirmPassword" class="form-label">Confirm Password</label>
-            <input type="password" v-model="form.confirmPassword" id="confirmPassword" class="form-control" required/>
+            <input type="password" v-model="form.confirmPassword" id="confirmPassword" class="form-control" required />
         </div>
         <div class="mb-3">
             <label for="role" class="form-label">Role</label>
@@ -32,7 +31,8 @@
 </template>
 
 <script>
-import axios from "@/plugins/axios";
+import { useUserStore } from '@/store/userStore';
+
 export default {
     props: {
         user: {
@@ -61,7 +61,7 @@ export default {
             immediate: true,
             handler(newUser) {
                 if (this.isEdit) {
-                    this.form = { 
+                    this.form = {
                         username: newUser.username,
                         email: newUser.email,
                         role: newUser.role,
@@ -84,27 +84,31 @@ export default {
             };
         },
         async submitForm() {
+            const userStore = useUserStore();
+
             try {
-                if (!this.isEdit) {
-                    if (this.form.password !== this.form.confirmPassword) {
-                        this.form.error = "Passwords do not match";
-                        return;
-                    }
+                if (!this.isEdit && this.form.password !== this.form.confirmPassword) {
+                    this.form.error = "Passwords do not match";
+                    return;
                 }
+
                 this.form.error = "";
+
                 const payload = {
                     username: this.form.username,
                     email: this.form.email,
                     password: this.form.password,
                     role: this.form.role,
                 };
+
                 console.log("Sending data to server:", payload);
+
                 if (this.isEdit) {
-                    await axios.patch(`/users/${this.user.id}`, payload);
+                    await userStore.updateUser({ id: this.user.id, ...payload });
                 } else {
-                    const response = await axios.post("/users", payload);
-                    console.log("User created:", response.data);
+                    await userStore.addUser(payload);
                 }
+
                 this.$emit("submit", this.form);
                 this.resetForm();
             } catch (error) {
@@ -116,10 +120,12 @@ export default {
 };
 </script>
 
+
 <style scoped>
 .user-form .form-label {
     margin-top: 1rem;
 }
+
 .alert {
     margin-top: 1rem;
 }

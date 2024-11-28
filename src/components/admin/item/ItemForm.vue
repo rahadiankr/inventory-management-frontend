@@ -1,8 +1,8 @@
 <template>
     <form @submit.prevent="submitForm" class="item-form">
         <div class="mb-3">
-            <label for="kode" class="form-label">Kode</label>
-            <input type="text" v-model="form.kode" id="kode" class="form-control" required />
+            <label for="id" class="form-label">Kode</label>
+            <input type="text" v-model="form.id" id="id" class="form-control" required />
         </div>
         <div class="mb-3">
             <label for="name" class="form-label">Nama</label>
@@ -24,8 +24,7 @@
 </template>
 
 <script>
-import axios from "@/plugins/axios";
-
+import { useItemStore } from '@/store/itemStore';
 export default {
     props: {
         item: {
@@ -40,7 +39,7 @@ export default {
     data() {
         return {
             form: {
-                kode: "",
+                id: "",
                 name: "",
                 description: "",
                 quantity: 0,
@@ -54,7 +53,7 @@ export default {
             handler(newItem) {
                 if (this.isEdit) {
                     this.form = {
-                        kode: newItem.kode,
+                        id: newItem.id,
                         name: newItem.name,
                         description: newItem.description,
                         quantity: newItem.quantity,
@@ -69,7 +68,7 @@ export default {
     methods: {
         resetForm() {
             this.form = {
-                kode: "",
+                id: "",
                 name: "",
                 description: "",
                 quantity: 0,
@@ -81,7 +80,7 @@ export default {
                 this.form.error = "";
 
                 const payload = {
-                    kode: this.form.kode,
+                    id: this.form.id,
                     name: this.form.name,
                     description: this.form.description,
                     quantity: this.form.quantity,
@@ -89,13 +88,10 @@ export default {
 
                 console.log("Sending data to server:", payload);
 
-                let response;
                 if (this.isEdit) {
-                    response = await axios.put(`/items/${this.item.id}`, payload);
-                    console.log("Item updated successfully");
+                    await useItemStore().updateItem(payload);
                 } else {
-                    response = await axios.post("/items", payload);
-                    console.log("Item created:", response.data);
+                    await useItemStore().addItem(payload);
                 }
 
                 this.$emit("submit", this.form);

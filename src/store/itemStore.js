@@ -1,10 +1,17 @@
-// code by [Risqi]
-import { defineStore } from 'pinia'
-import apiClient from '@/plugins/axios'
-export const useItemStore = defineStore('item', {
+import { defineStore } from 'pinia';
+import apiClient from '@/plugins/axios';
+export const useItemStore = defineStore('itemStore', {
   state: () => ({
     items: [],
   }),
+  getters: {
+    getItemByKode: (state) => (id) => {
+      return state.items.find((item) => item.id === id)
+    },
+    totalItems: (state) => state.items.length,
+    avalaibleItems: (state) => state.items.filter((item) => item.stok > 0),
+  },
+
   actions: {
     async fetchItems() {
       try {
@@ -41,7 +48,7 @@ export const useItemStore = defineStore('item', {
       } catch (error) {
         console.error('Failed to delete item:', error)
       }
-    }
+    },
   },
   persist: true,
-});
+})

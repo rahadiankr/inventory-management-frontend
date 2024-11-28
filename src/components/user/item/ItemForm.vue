@@ -4,16 +4,16 @@
         <form @submit.prevent="submitForm">
             <h2>Peminjaman Barang</h2>
             <div>
-                <label for="kode">Kode Barang:</label>
-                <input type="text" v-model="form.kode" id="kode" :disabled="true" />
+                <label for="id">Kode Barang:</label>
+                <input type="text" v-model="form.id" id="id" :disabled="true" />
             </div>
             <div>
                 <label for="nama">Nama Barang:</label>
-                <input type="text" v-model="form.kode" id="nama" :disabled="true" />
+                <input type="text" v-model="form.id" id="nama" :disabled="true" />
             </div>
             <div>
                 <label for="deskripsi">Deskripsi:</label>
-                <input type="text" v-model="form.kode" id="deskripsi" :disabled="true" />
+                <input type="text" v-model="form.id" id="deskripsi" :disabled="true" />
             </div>
             <div>
                 <label for="tanggal_pinjam">Tanggal Pinjam:</label>
@@ -44,7 +44,7 @@ export default {
     data() {
         return {
             form: {
-                kode: this.item ? this.item.kode : "",
+                id: this.item ? this.item.id : "",
                 nama: this.item ? this.item.nama : "",
                 deskripsi: this.item ? this.item.deskripsi : "",
                 tanggal_pinjam: "",
@@ -64,7 +64,7 @@ export default {
     watch: {
         item(newItem) {
             if (newItem) {
-                this.form.kode = newItem.kode;
+                this.form.id = newItem.id;
                 this.form.nama = newItem.nama;
                 this.form.deskripsi = newItem.deskripsi;
             }
@@ -85,22 +85,27 @@ form {
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
+
 h2 {
     text-align: center;
     margin-bottom: 20px;
 }
+
 label {
     margin-top: 10px;
 }
+
 input {
     padding: 5px;
     margin-top: 5px;
 }
+
 .button-container {
     display: flex;
     justify-content: space-between;
     margin-top: 20px;
 }
+
 button {
     background-color: #4caf50;
     color: white;
@@ -109,12 +114,15 @@ button {
     cursor: pointer;
     border-radius: 4px;
 }
+
 button:hover {
     background-color: #45a049;
 }
+
 button[type="button"] {
     background-color: #f44336;
 }
+
 button[type="button"]:hover {
     background-color: #e31b0c;
 }

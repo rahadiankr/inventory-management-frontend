@@ -7,7 +7,7 @@ export function createPiniaMiddleware() {
             // Proteksi berdasarkan user role
             const userRole = localStorage.getItem('role');
             const protectedActions = ['addItem', 'updateItem', 'deleteItem'];
-            if (protectedActions.includes(name) && userRole !== 'admin') {
+            if (protectedActions.includes(name) && userRole !== 'ADMIN') {
                 console.error(`Unauthorized action "${name}" attempted by role "${userRole}"`);
                 throw new Error('Unauthorized');
             }
