@@ -94,7 +94,6 @@ export default {
     },
     setup() {
         const itemStore = useItemStore();
-
         return {
             itemStore,
         };
