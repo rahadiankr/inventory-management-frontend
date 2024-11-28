@@ -3,14 +3,14 @@ import { useAuthStore } from "@/store/authStore";
 
 export const login = async (username, password) => {
     try {
-        const response = await apiClient.post("./auth/login", {
+        const response = await apiClient.post("/auth/login", {
             username,
             password,
         });
         console.log("Login response:", response.data);
 
         if (!response.data || !response.data.data || !response.data.data.token) {
-            throw new Error ("Invalid response from server");
+            throw new Error("Invalid response from server");
         }
 
         const { token, role } = response.data.data;
@@ -26,7 +26,7 @@ export const login = async (username, password) => {
             authStore.role
         );
         return response.data.data;
-    } catch(error) {
+    } catch (error) {
         if (error.response) {
             switch (error.response.status) {
                 case 400: throw new Error(error.response.data.message || "Username or password is incorrect");
@@ -42,7 +42,7 @@ export const login = async (username, password) => {
 
 export const register = async (username, email, password) => {
     try {
-        const response = await apiClient.post("./auth/register", {
+        const response = await apiClient.post("/auth/register", {
             username,
             email,
             password
@@ -54,7 +54,7 @@ export const register = async (username, email, password) => {
                 case 400: throw new Error(error.response.data.message || "User already exists");
                 default: throw new Error(error.response.data.message || "An error occurred");
             }
-        }else {
+        } else {
             console.error("Error during registration:", error);
             throw new Error(error.message || "An unexpected error occurred");
         }
